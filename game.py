@@ -123,6 +123,12 @@ class World:
             if obstacle.y > SCREEN_SIZE:
                 self.obstacle_list.pop(index)
 
+        for index, coin in enumerate(self.coin_list):
+            coin.go_down(scroll_value)
+            
+            if coin.y > SCREEN_SIZE:
+                self.coin_list.pop(index)
+
         for border in self.border_list:# supprime les borders sorties et en cree des nouvelles en haut
             if border.y>=SCREEN_SIZE:
                 border.y-=(SCREEN_SIZE+16)
@@ -132,6 +138,9 @@ class World:
         for obstacle in self.obstacle_list:
             if obstacle.check_collides(player):
                 return True
+        for coin in self.coin_list:
+            if coin.check_collides(player):
+                player.score+=round(2.71**(0.1*(pyxel.frame_count//60)))*10
         
         return False
         
@@ -143,6 +152,10 @@ class World:
             obstacle = Obstacle(pyxel.rndi(LEFT_BORDER, RIGHT_BORDER - self.obstacle_width), 0)
             self.obstacle_list.append(obstacle)
 
+        if obstacle_could_spawn and (pyxel.rndf(0, 1) > 0.95):
+            self.last_spawn_time = pyxel.frame_count
+            coin = Coin(pyxel.rndi(LEFT_BORDER, RIGHT_BORDER - self.obstacle_width), 0)
+            self.coin_list.append(coin)
 
     def update(self, speed, player):
         self.scroll_world(speed)
@@ -156,6 +169,8 @@ class World:
             obstacle.draw()
         for border in self.border_list:
             border.draw()
+        for coin in self.coin_list:
+            coin.draw_coin()
 
 class Obstacle(Hitbox):
     def __init__(self, x, y):
@@ -170,16 +185,19 @@ class Obstacle(Hitbox):
 
 
 class Coin(Obstacle):
-    pass
+    def draw_coin(self):
+        self.image=(16,104)
+        pyxel.blt(self.x, self.y, 0, self.image[0], self.image[1], self.width, self.height, colkey=5)
+
 
 ### GAME CLASSE ###
 
 class Game:
     def __init__(self):
         self.pyxel_init()
-        self.score=0
         self.world = World()
         self.player = Player(SCREEN_SIZE / 2, SCREEN_SIZE / 2)
+        self.player.score=0
         pyxel.run(self.update, self.draw)
     
     def pyxel_init(self):
@@ -189,15 +207,17 @@ class Game:
     def update(self):
         self.world.update(speed= 5, player= self.player)
         self.player.update()
-        if pyxel.frame_count%30==0:
-            self.score+=round(2.71**(0.1*(pyxel.frame_count//60)))
+        if pyxel.frame_count%30==0 and self.player.health>0:
+            self.player.score+=round(2.71**(0.1*(pyxel.frame_count//60)))
 
     
     def draw(self):
         pyxel.cls(13)
+        pyxel.rect(8,2,SCREEN_SIZE-(8*2),12,12)
         self.world.draw()
         self.player.draw()
-        pyxel.text(50,0,"score: " + str(self.score),0)
+        pyxel.text(80,0,"score: " + str(self.player.score),0)
+        pyxel.text(20,0,"vie: "+str(self.player.health),0)
         
         
 
