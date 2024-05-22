@@ -110,11 +110,12 @@ class World:
     def __init__(self):
         self.obstacle_list = []
         self.border_list = [Border(j*(SCREEN_SIZE-8), (i-1)*8, 8, 8+i%2) for i in range((SCREEN_SIZE//8+2)) for j in range(2)]
-        self.last_spawn_time = 0
+        self.last_obstacle_1_spawn_time = 0
+        self.last_obstacle_2_spawn_time = 0
         self.obstacle_width = 9
         self.coin_list=[]
         
-        self.spawn_delay_frame_count = 12
+        self.obstacle_spawn_delay_frame_count = 12
             
     def scroll_world(self, scroll_value):
         for index, obstacle in enumerate(self.obstacle_list):
@@ -145,17 +146,22 @@ class World:
         return False
         
     def spawn_random_obstacles(self):
-        obstacle_could_spawn = (pyxel.frame_count - self.last_spawn_time) > self.spawn_delay_frame_count
+        obstacle_1_could_spawn = (pyxel.frame_count - self.last_obstacle_1_spawn_time) > self.obstacle_spawn_delay_frame_count
+        obstacle_2_could_spawn = (pyxel.frame_count - self.last_obstacle_2_spawn_time) > self.obstacle_spawn_delay_frame_count
         
-        if obstacle_could_spawn and (pyxel.rndf(0, 1) > 0.62):
-            self.last_spawn_time = pyxel.frame_count
+        if obstacle_1_could_spawn and (pyxel.rndf(0, 1) > 0.62):
+            self.last_obstacle_1_spawn_time = pyxel.frame_count
+            if pyxel.rndf(0, 1) > 0.80:
+                obstacle = Coin(pyxel.rndi(LEFT_BORDER, RIGHT_BORDER - self.obstacle_width), 0)
+            else:
+                obstacle = Obstacle(pyxel.rndi(LEFT_BORDER, RIGHT_BORDER - self.obstacle_width), 0)
+                
+            self.obstacle_list.append(obstacle)
+            
+        if (pyxel.frame_count > 600) and obstacle_2_could_spawn and (pyxel.rndf(0, 1) > 0.8):
+            self.last_obstacle_2_spawn_time = pyxel.frame_count
             obstacle = Obstacle(pyxel.rndi(LEFT_BORDER, RIGHT_BORDER - self.obstacle_width), 0)
             self.obstacle_list.append(obstacle)
-
-        if obstacle_could_spawn and (pyxel.rndf(0, 1) > 0.95):
-            self.last_spawn_time = pyxel.frame_count
-            coin = Coin(pyxel.rndi(LEFT_BORDER, RIGHT_BORDER - self.obstacle_width), 0)
-            self.coin_list.append(coin)
 
     def update(self, speed, player):
         self.scroll_world(speed)
@@ -185,7 +191,7 @@ class Obstacle(Hitbox):
 
 
 class Coin(Obstacle):
-    def draw_coin(self):
+    def draw(self):
         self.image=(16,104)
         pyxel.blt(self.x, self.y, 0, self.image[0], self.image[1], self.width, self.height, colkey=5)
 
