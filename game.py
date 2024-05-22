@@ -153,6 +153,8 @@ class World:
             self.last_obstacle_1_spawn_time = pyxel.frame_count
             if pyxel.rndf(0, 1) > 0.80:
                 obstacle = Coin(pyxel.rndi(LEFT_BORDER, RIGHT_BORDER - self.obstacle_width), 16)
+            elif pyxel.rndf(0, 1) > 0.80:
+                obstacle = Healing(pyxel.rndi(LEFT_BORDER, RIGHT_BORDER - self.obstacle_width), 16)
             else:
                 obstacle = Obstacle(pyxel.rndi(LEFT_BORDER, RIGHT_BORDER - self.obstacle_width), 16)
                 
