@@ -221,6 +221,7 @@ class Game:
     def pyxel_init(self):
         pyxel.init(SCREEN_SIZE, SCREEN_SIZE, GAME_NAME, quit_key = pyxel.KEY_ESCAPE,fps=30)
         pyxel.load('1.pyxres')
+        pyxel.play(0, 0, loop = True)
     
     def update(self):
         self.world.update(speed= 5, player= self.player)
