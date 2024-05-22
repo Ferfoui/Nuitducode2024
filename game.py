@@ -48,6 +48,8 @@ class Player(Hitbox):
     def set_dead(self):
         self.acceleration = 0
         self.image = 48, 24
+        
+        self.is_alive = False
 
     def update(self):
         self.apply_movement()
@@ -171,13 +173,14 @@ class World:
         
         obstacles = self.check_obstacle_collides(player)
         
-        for obstacle in obstacles:
-            if obstacle.is_coin:
-                player.score += round(2.71**(0.2*(pyxel.frame_count//60))) * 10
-            elif obstacle.is_heal:
-                player.health += 5
-            else:
-                player.health -= 10
+        if player.is_alive:
+            for obstacle in obstacles:
+                if obstacle.is_coin:
+                    player.score += round(2.71**(0.2*(pyxel.frame_count//60))) * 10
+                elif obstacle.is_heal:
+                    player.health += 5
+                else:
+                    player.health -= 10
 
                 
     
@@ -255,7 +258,7 @@ class Game:
         self.player.draw()
         pyxel.text(80, 6,"score: " + str(self.player.score),0)
         pyxel.text(20, 6,"vie: "+str(self.player.health),0)
-        if not(self.player.is_alive) or self.player.health<=0:
+        if not(self.player.is_alive):
             pyxel.text(50,60,"GAME OVER",9)
         
         
