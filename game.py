@@ -13,10 +13,16 @@ class Player:
         self.y = y  
 
     def update(self):
-        pass
+        if pyxel.btn(pyxel.KEY_LEFT) and (self.x > 0):
+            self.move(-1,2)
+        if pyxel.btn(pyxel.KEY_RIGHT) and (self.x < SCREEN_SIZE):
+            self.move(1,2)
 
     def draw(self):
-        pass
+        pyxel.blt(self.x, self.y, 0, 0, 8, 16, 16, colkey=12)
+
+    def move(self, direction, speed):
+        self.x += direction * speed
 
 
 class World:
@@ -48,15 +54,20 @@ class Obstacle:
 
 class Game:
     def __init__(self):
-        pyxel.init(SCREEN_SIZE, SCREEN_SIZE, GAME_NAME, quit_key=pyxel.KEY_ESCAPE)
+        self.pyxel_init()
+        
         self.player = Player(0,0)
         pyxel.run(self.update, self.draw)
+    
+    def pyxel_init(self):
+        pyxel.init(SCREEN_SIZE, SCREEN_SIZE, GAME_NAME, quit_key = pyxel.KEY_ESCAPE)
+        pyxel.load('1.pyxres')
     
     def update(self):
         self.player.update()
     
     def draw(self):
-        pyxel.cls(0)
+        pyxel.cls(5)
         self.player.draw()
         
         
