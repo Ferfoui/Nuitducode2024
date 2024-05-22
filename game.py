@@ -136,14 +136,14 @@ class World:
             border.move_down(scroll_value)
     
     def check_obstacle_collides(self, player):
-        for obstacle in self.obstacle_list:
-            if obstacle.check_collides(player):
-                return True
-        for coin in self.coin_list:
-            if coin.check_collides(player):
-                player.score+=round(2.71**(0.1*(pyxel.frame_count//60)))*10
+        obstacles = []
         
-        return False
+        for index, obstacle in enumerate(self.obstacle_list):
+            if obstacle.check_collides(player):
+                obstacles.append(obstacle)
+                self.obstacle_list.pop(index)
+        
+        return obstacles
         
     def spawn_random_obstacles(self):
         obstacle_1_could_spawn = (pyxel.frame_count - self.last_obstacle_1_spawn_time) > self.obstacle_spawn_delay_frame_count
@@ -167,8 +167,15 @@ class World:
         self.scroll_world(speed)
         self.spawn_random_obstacles()
         
-        if self.check_obstacle_collides(player):
-            player.health -= 10
+        obstacles = self.check_obstacle_collides(player)
+        
+        for obstacle in obstacles:
+            if obstacle.is_coin:
+                player.score += round(2.71**(0.1*(pyxel.frame_count//60))) * 10
+            else:
+                player.health -= 10
+
+                
     
     def draw(self):
         for obstacle in self.obstacle_list:
@@ -181,6 +188,7 @@ class World:
 class Obstacle(Hitbox):
     def __init__(self, x, y):
         super().__init__(x, y, width= 9, height= 9)
+        self.is_coin = False
         
     def go_down(self, pixel_number_to_move):
         self.y += pixel_number_to_move
@@ -191,6 +199,10 @@ class Obstacle(Hitbox):
 
 
 class Coin(Obstacle):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.is_coin = True
+    
     def draw(self):
         self.image=(16,104)
         pyxel.blt(self.x, self.y, 0, self.image[0], self.image[1], self.width, self.height, colkey=5)
