@@ -239,7 +239,7 @@ class Game:
         pyxel.text(80, 6,"score: " + str(self.player.score),0)
         pyxel.text(20, 6,"vie: "+str(self.player.health),0)
         if not(self.player.is_alive) or self.player.health<=0:
-            pyxel.text(50,60,"GAME OVER",0)
+            pyxel.text(50,60,"GAME OVER",9)
         
         
 
