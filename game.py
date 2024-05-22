@@ -1,4 +1,4 @@
-import pyxel, random
+import pyxel
 
 ### CONSTANTS ###
 
@@ -17,20 +17,43 @@ class Player:
         self.width = 16
         self.height = 16
         
-        self.horizontal_speed = 2
+        self.horizontal_speed = 0
+        self.acceleration = 2
+        self.max_speed = 10
 
     def update(self):
-        if pyxel.btn(pyxel.KEY_LEFT) and (self.x > 0):
-            self.move(LEFT_DIRECTION)
-        if pyxel.btn(pyxel.KEY_RIGHT) and (self.x + self.width < SCREEN_SIZE):
-            self.move(RIGHT_DIRECTION)
+        if pyxel.btn(pyxel.KEY_LEFT):
+            self.calcul_speed(LEFT_DIRECTION)
+        if pyxel.btn(pyxel.KEY_RIGHT):
+            self.calcul_speed(RIGHT_DIRECTION)
+            
+        self.adjust_speed()
+        
+        self.move()
 
     def draw(self):
         image = 48, 8
         pyxel.blt(self.x, self.y, 0, image[0], image[1], self.width, self.height, colkey=5)
 
-    def move(self, direction):
-        self.x += direction * self.horizontal_speed
+    def calcul_speed(self, direction):
+        self.horizontal_speed += direction * self.acceleration
+        
+        if self.horizontal_speed > self.max_speed:
+            self.horizontal_speed = self.max_speed
+    
+    def adjust_speed(self):
+        if self.horizontal_speed != 0:
+            self.horizontal_speed -= self.horizontal_speed / 5
+
+    def move(self):
+        self.x += self.horizontal_speed
+        
+        if self.x < 0:
+            self.x = 0
+            self.horizontal_speed = 0
+        elif self.x > SCREEN_SIZE - self.width:
+            self.x = SCREEN_SIZE - self.width
+            self.horizontal_speed = 0
 
 class Border:
     def __init__(self, width):
@@ -61,9 +84,9 @@ class World:
     def spawn_random_obstacles(self):
         obstacle_could_spawn = (pyxel.frame_count - self.last_spawn_time) > self.spawn_delay_frame_count
         
-        if obstacle_could_spawn and (random.random() > 0.60):
+        if obstacle_could_spawn and (pyxel.rndf(0, 1) > 0.60):
             self.last_spawn_time = pyxel.frame_count
-            obstacle = Obstacle(random.randrange(0, SCREEN_SIZE - self.obstacle_width), 0)
+            obstacle = Obstacle(pyxel.rndi(0, SCREEN_SIZE - self.obstacle_width), 0)
             self.obstacle_list.append(obstacle)
 
     
