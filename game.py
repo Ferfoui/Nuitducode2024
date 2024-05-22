@@ -13,13 +13,17 @@ class Player:
         self.y = y  
 
     def update(self):
-        pass
+        if pyxel.btn(pyxel.KEY_LEFT) and self.x>0:
+            self.move(-1,2)
+        if pyxel.btn(pyxel.KEY_RIGHT) and self.x<SCREEN_SIZE:
+            self.move(1,2)
+
 
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 0, 8, 8, 8 ,colkey=12)
 
-    def move(self,direction):
-        pass
+    def move(self, direction, speed):
+        self.x +=direction*speed
 
 
 ### GAME CLASSE ###
