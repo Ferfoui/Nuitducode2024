@@ -16,7 +16,10 @@ class Player:
         pass
 
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 0, 0, 16, 16 )
+        pyxel.blt(self.x, self.y, 0, 0, 8, 8, 8 ,colkey=12)
+
+    def move(self,direction):
+        pass
 
 
 ### GAME CLASSE ###
@@ -24,6 +27,7 @@ class Player:
 class Game:
     def __init__(self):
         pyxel.init(SCREEN_SIZE, SCREEN_SIZE, GAME_NAME, quit_key = pyxel.KEY_ESCAPE)
+        #pyxel.image[0].load(0,0,"1.pyxres")  ne marche pas
         self.player = Player(0,0)
         pyxel.run(self.update, self.draw)
     
@@ -31,7 +35,7 @@ class Game:
         self.player.update()
     
     def draw(self):
-        pyxel.cls(0)
+        pyxel.cls(12)
         self.player.draw()
         
         
