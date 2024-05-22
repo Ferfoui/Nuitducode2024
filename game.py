@@ -5,6 +5,9 @@ import pyxel, random
 SCREEN_SIZE = 128
 GAME_NAME = "Nuit du code 2024"
 
+RIGHT_DIRECTION = 1
+LEFT_DIRECTION = -1
+
 ### IN GAME CLASSES ###
 
 class Player:
@@ -12,20 +15,22 @@ class Player:
         self.x = x
         self.y = y
         self.width = 16
-        self.height = 16  
+        self.height = 16
+        
+        self.horizontal_speed = 2
 
     def update(self):
         if pyxel.btn(pyxel.KEY_LEFT) and (self.x > 0):
-            self.move(-1,2)
+            self.move(LEFT_DIRECTION)
         if pyxel.btn(pyxel.KEY_RIGHT) and (self.x + self.width < SCREEN_SIZE):
-            self.move(1,2)
+            self.move(RIGHT_DIRECTION)
 
     def draw(self):
         image = 48, 8
         pyxel.blt(self.x, self.y, 0, image[0], image[1], self.width, self.height, colkey=5)
 
-    def move(self, direction, speed):
-        self.x += direction * speed
+    def move(self, direction):
+        self.x += direction * self.horizontal_speed
 
 class Border:
     def __init__(self, width):
