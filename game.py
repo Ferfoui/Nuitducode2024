@@ -1,4 +1,4 @@
-import pyxel
+import pyxel, random
 
 ### CONSTANTS ###
 
@@ -11,8 +11,8 @@ class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.width=16
-        self.height=16  
+        self.width = 16
+        self.height = 16  
 
     def update(self):
         if pyxel.btn(pyxel.KEY_LEFT) and (self.x > 0):
@@ -41,13 +41,29 @@ class Border:
 class World:
     def __init__(self):
         self.obstacle_list = []
+        self.last_spawn_time = 0
+        
+        self.spawn_delay_frame_count = 25
             
     def scroll_world(self, scroll_value):
-        for obstacle in self.obstacle_list:
+        for index, obstacle in enumerate(self.obstacle_list):
             obstacle.go_down(scroll_value)
+            
+            if obstacle.y > SCREEN_SIZE:
+                self.obstacle_list.pop(index)
     
-    def update(self):
-        pass
+    def spawn_random_obstacles(self):
+        obstacle_could_spawn = (pyxel.frame_count - self.last_spawn_time) > self.spawn_delay_frame_count
+        
+        if obstacle_could_spawn and (random.random() > 0.60):
+            self.last_spawn_time = pyxel.frame_count
+            obstacle = Obstacle(random.randrange(0, SCREEN_SIZE - 9), 0)
+            self.obstacle_list.append(obstacle)
+
+    
+    def update(self, speed):
+        self.scroll_world(speed)
+        self.spawn_random_obstacles()
     
     def draw(self):
         for obstacle in self.obstacle_list:
@@ -74,7 +90,8 @@ class Game:
     def __init__(self):
         self.pyxel_init()
         
-        self.player = Player(0,0)
+        self.world = World()
+        self.player = Player(0, SCREEN_SIZE / 2)
         pyxel.run(self.update, self.draw)
     
     def pyxel_init(self):
@@ -82,10 +99,12 @@ class Game:
         pyxel.load('1.pyxres')
     
     def update(self):
+        self.world.update(5)
         self.player.update()
     
     def draw(self):
         pyxel.cls(3)
+        self.world.draw()
         self.player.draw()
         
         
