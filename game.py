@@ -3,7 +3,7 @@ import pyxel
 ### CONSTANTS ###
 
 SCREEN_SIZE = 128
-GAME_NAME = "Nuit du code 2024"
+GAME_NAME = "Simulateur de piste de décolage accidentée et infinie"
 
 RIGHT_DIRECTION = 1
 LEFT_DIRECTION = -1
