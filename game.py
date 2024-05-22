@@ -42,6 +42,7 @@ class World:
     def __init__(self):
         self.obstacle_list = []
         self.last_spawn_time = 0
+        self.obstacle_width = 9
         
         self.spawn_delay_frame_count = 25
             
@@ -57,7 +58,7 @@ class World:
         
         if obstacle_could_spawn and (random.random() > 0.60):
             self.last_spawn_time = pyxel.frame_count
-            obstacle = Obstacle(random.randrange(0, SCREEN_SIZE - 9), 0)
+            obstacle = Obstacle(random.randrange(0, SCREEN_SIZE - self.obstacle_width), 0)
             self.obstacle_list.append(obstacle)
 
     
