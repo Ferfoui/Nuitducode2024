@@ -11,6 +11,9 @@ LEFT_DIRECTION = -1
 LEFT_BORDER = 8
 RIGHT_BORDER = SCREEN_SIZE - 8
 
+BACKGROUD_COLOR = 13
+TRANSPARENT_COLOR = 5
+
 ### IN GAME CLASSES ###
 
 class Hitbox:
@@ -48,6 +51,7 @@ class Player(Hitbox):
     def set_dead(self):
         self.acceleration = 0
         self.image = 48, 24
+        self.is_alive = False
 
     def update(self):
         self.apply_movement()
@@ -67,7 +71,7 @@ class Player(Hitbox):
         self.move()
 
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, self.image[0], self.image[1], self.width, self.height, colkey=5)
+        pyxel.blt(self.x, self.y, 0, self.image[0], self.image[1], self.width, self.height, colkey= TRANSPARENT_COLOR)
 
     def calcul_speed(self, direction):
         self.horizontal_speed += direction * self.acceleration
@@ -166,20 +170,37 @@ class Obstacle(Hitbox):
 
     def draw(self):
         image = (20, 59)
-        pyxel.blt(self.x, self.y, 0, image[0], image[1], self.width, self.height, colkey=5)
+        pyxel.blt(self.x, self.y, 0, image[0], image[1], self.width, self.height, colkey= TRANSPARENT_COLOR)
 
 
 class Coin(Obstacle):
     pass
+
+## Overlay
+
+class Overlay:
+    def __init__(self):
+        self.score = 0
+
+    def calcul_score(self):
+        if (pyxel.frame_count % 30) == 0:
+            self.score+=round(2.71**(0.1*(pyxel.frame_count//60)))
+        
+    def update(self, is_player_alive):
+        if is_player_alive:
+            self.calcul_score()
+    
+    def draw(self):
+        pyxel.text(50, 0,"score: " + str(self.score), 0)
 
 ### GAME CLASSE ###
 
 class Game:
     def __init__(self):
         self.pyxel_init()
-        self.score=0
         self.world = World()
         self.player = Player(SCREEN_SIZE / 2, SCREEN_SIZE / 2)
+        self.overlay = Overlay()
         pyxel.run(self.update, self.draw)
     
     def pyxel_init(self):
@@ -189,15 +210,13 @@ class Game:
     def update(self):
         self.world.update(speed= 5, player= self.player)
         self.player.update()
-        if pyxel.frame_count%30==0:
-            self.score+=round(2.71**(0.1*(pyxel.frame_count//60)))
+        self.overlay.update(self.player.is_alive)
 
-    
     def draw(self):
-        pyxel.cls(13)
+        pyxel.cls(BACKGROUD_COLOR)
         self.world.draw()
         self.player.draw()
-        pyxel.text(50,0,"score: " + str(self.score),0)
+        self.overlay.draw()
         
         
 
