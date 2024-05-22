@@ -10,16 +10,18 @@ GAME_NAME = "Nuit du code 2024"
 class Player:
     def __init__(self, x, y):
         self.x = x
-        self.y = y  
+        self.y = y
+        self.width=16
+        self.height=16  
 
     def update(self):
         if pyxel.btn(pyxel.KEY_LEFT) and (self.x > 0):
             self.move(-1,2)
-        if pyxel.btn(pyxel.KEY_RIGHT) and (self.x < SCREEN_SIZE):
+        if pyxel.btn(pyxel.KEY_RIGHT) and (self.x + self.width < SCREEN_SIZE):
             self.move(1,2)
 
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 0, 8, 16, 16, colkey=12)
+        pyxel.blt(self.x, self.y, 0, 0, 8, self.width, self.height, colkey=12)
 
     def move(self, direction, speed):
         self.x += direction * speed
