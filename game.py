@@ -26,6 +26,15 @@ class Player:
     def move(self, direction, speed):
         self.x += direction * speed
 
+class Border:
+    def __init__(self, width):
+        self.width = width
+
+    def update(self):
+        pass
+
+    def draw(self):
+        pyxel.blt()
 
 ### GAME CLASSE ###
 
