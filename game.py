@@ -8,6 +8,9 @@ GAME_NAME = "Nuit du code 2024"
 RIGHT_DIRECTION = 1
 LEFT_DIRECTION = -1
 
+LEFT_BORDER = 8
+RIGHT_BORDER = SCREEN_SIZE - 8
+
 ### IN GAME CLASSES ###
 
 class Hitbox:
@@ -39,7 +42,7 @@ class Player(Hitbox):
         
         self.horizontal_speed = 0
         self.acceleration = 2
-        self.max_speed = 10
+        self.max_speed = 7
         self.image = 48, 8
     
     def set_dead(self):
@@ -79,11 +82,11 @@ class Player(Hitbox):
     def move(self):
         self.x += self.horizontal_speed
         
-        if self.x < 0:
-            self.x = 0
+        if self.x < LEFT_BORDER:
+            self.x = LEFT_BORDER
             self.horizontal_speed = 0
-        elif self.x > SCREEN_SIZE - self.width:
-            self.x = SCREEN_SIZE - self.width
+        elif self.x > (RIGHT_BORDER - self.width):
+            self.x = RIGHT_BORDER - self.width
             self.horizontal_speed = 0
 
 ## Border
@@ -111,7 +114,7 @@ class World:
         self.obstacle_width = 9
         self.coin_list=[]
         
-        self.spawn_delay_frame_count = 25
+        self.spawn_delay_frame_count = 12
             
     def scroll_world(self, scroll_value):
         for index, obstacle in enumerate(self.obstacle_list):
@@ -135,9 +138,9 @@ class World:
     def spawn_random_obstacles(self):
         obstacle_could_spawn = (pyxel.frame_count - self.last_spawn_time) > self.spawn_delay_frame_count
         
-        if obstacle_could_spawn and (pyxel.rndf(0, 1) > 0.60):
+        if obstacle_could_spawn and (pyxel.rndf(0, 1) > 0.62):
             self.last_spawn_time = pyxel.frame_count
-            obstacle = Obstacle(pyxel.rndi(0, SCREEN_SIZE - self.obstacle_width), 0)
+            obstacle = Obstacle(pyxel.rndi(LEFT_BORDER, RIGHT_BORDER - self.obstacle_width), 0)
             self.obstacle_list.append(obstacle)
 
 
@@ -191,7 +194,7 @@ class Game:
 
     
     def draw(self):
-        pyxel.cls(3)
+        pyxel.cls(13)
         self.world.draw()
         self.player.draw()
         pyxel.text(50,0,"score: " + str(self.score),0)
