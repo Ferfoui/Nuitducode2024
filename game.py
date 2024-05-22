@@ -10,12 +10,29 @@ LEFT_DIRECTION = -1
 
 ### IN GAME CLASSES ###
 
-class Player:
+class Hitbox:
+    def __init__(self, x_position, y_position, width, height):
+        self.x = x_position
+        self.y = y_position
+        self.width = width
+        self.height = height
+        
+    def check_collides(self, other_hitbox):
+        x_collide_range = (self.x, self.x + self.width)
+        y_collide_range = (self.y, self.y + self.height)
+        x_overlap_right_corner = (x_collide_range[0] < other_hitbox.x) and (other_hitbox.x < x_collide_range[1])
+        y_overlap_right_corner = (y_collide_range[0] < other_hitbox.y) and (other_hitbox.y < y_collide_range[1])
+        
+        x_left_corner = other_hitbox.x + other_hitbox.width
+        y_left_corner = other_hitbox.y + other_hitbox.height
+        x_overlap_left_corner = (x_collide_range[0] < x_left_corner) and (x_left_corner < x_collide_range[1])
+        y_overlap_left_corner = (y_collide_range[0] < y_left_corner) and (y_left_corner < y_collide_range[1])
+        
+        return (x_overlap_right_corner or x_overlap_left_corner) and (y_overlap_left_corner or y_overlap_right_corner)
+
+class Player(Hitbox):
     def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.width = 16
-        self.height = 16
+        super().__init__(x, y, width= 16, height= 16)
         
         self.horizontal_speed = 0
         self.acceleration = 2
@@ -71,7 +88,6 @@ class Border:
         pyxel.blt(self.x, self.y, 0, image[0], image[1], 8, 8)
 
 
-
 ## World
 class World:
     def __init__(self):
@@ -93,8 +109,14 @@ class World:
             if border.y>=SCREEN_SIZE:
                 border.y-=(SCREEN_SIZE+16)
             border.move_down(scroll_value)
-            
     
+    def check_collides(self, player):
+        for obstacle in self.obstacle_list:
+            if obstacle.check_collides(player):
+                return True
+        
+        return False
+        
     def spawn_random_obstacles(self):
         obstacle_could_spawn = (pyxel.frame_count - self.last_spawn_time) > self.spawn_delay_frame_count
         
@@ -104,9 +126,11 @@ class World:
             self.obstacle_list.append(obstacle)
 
 
-    def update(self, speed):
+    def update(self, speed, player):
         self.scroll_world(speed)
         self.spawn_random_obstacles()
+        
+        self.check_collides(player)
     
     def draw(self):
         for obstacle in self.obstacle_list:
@@ -114,12 +138,9 @@ class World:
         for border in self.border_list:
             border.draw()
 
-class Obstacle:
+class Obstacle(Hitbox):
     def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.width = 9
-        self.height = 9
+        super().__init__(x, y, width= 9, height= 9)
         
     def go_down(self, pixel_number_to_move):
         self.y += pixel_number_to_move
@@ -144,7 +165,7 @@ class Game:
         pyxel.load('1.pyxres')
     
     def update(self):
-        self.world.update(5)
+        self.world.update(speed= 5, player= self.player)
         self.player.update()
 
     
