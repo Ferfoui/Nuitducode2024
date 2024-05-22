@@ -19,12 +19,13 @@ class Player:
             self.move(1,2)
 
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 0, 8, 16, 16, colkey=12)
+        pyxel.blt(self.x, self.y, 0, 48, 8, 16, 16, colkey=5)
 
     def move(self, direction, speed):
         self.x += direction * speed
 
 
+## World
 class World:
     def __init__(self):
         self.obstacle_list = []
@@ -48,6 +49,8 @@ class Obstacle:
     def go_down(self, pixel_number_to_move):
         self.y += pixel_number_to_move
 
+    def draw(self):
+        pass
 
 
 ### GAME CLASSE ###
@@ -67,7 +70,7 @@ class Game:
         self.player.update()
     
     def draw(self):
-        pyxel.cls(5)
+        pyxel.cls(3)
         self.player.draw()
         
         
