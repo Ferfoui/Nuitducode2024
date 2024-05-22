@@ -21,7 +21,7 @@ class Player:
             self.move(1,2)
 
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 0, 8, self.width, self.height, colkey=12)
+        pyxel.blt(self.x, self.y, 0, 48, 8, self.width, self.height, colkey=5)
 
     def move(self, direction, speed):
         self.x += direction * speed
@@ -35,6 +35,34 @@ class Border:
 
     def draw(self):
         pyxel.blt()
+
+## World
+class World:
+    def __init__(self):
+        self.obstacle_list = []
+            
+    def scroll_world(self, scroll_value):
+        for obstacle in self.obstacle_list:
+            obstacle.go_down(scroll_value)
+    
+    def update():
+        pass
+    
+    def draw():
+        pass
+
+class Obstacle:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.image = None
+        
+    def go_down(self, pixel_number_to_move):
+        self.y += pixel_number_to_move
+
+    def draw(self):
+        pass
+
 
 ### GAME CLASSE ###
 
@@ -53,7 +81,7 @@ class Game:
         self.player.update()
     
     def draw(self):
-        pyxel.cls(5)
+        pyxel.cls(3)
         self.player.draw()
         
         
