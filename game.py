@@ -76,7 +76,7 @@ class Border:
 class World:
     def __init__(self):
         self.obstacle_list = []
-        self.border_list = [Border(j*(SCREEN_SIZE-8), (i-1)*8, 8, 8+i%2) for i in range((SCREEN_SIZE//8+1)) for j in range(2)]
+        self.border_list = [Border(j*(SCREEN_SIZE-8), (i-1)*8, 8, 8+i%2) for i in range((SCREEN_SIZE//8+2)) for j in range(2)]
         self.last_spawn_time = 0
         self.obstacle_width = 9
         
@@ -89,11 +89,10 @@ class World:
             if obstacle.y > SCREEN_SIZE:
                 self.obstacle_list.pop(index)
 
-        for border in self.border_list:
-            if border.y>SCREEN_SIZE:
-                self.border_list.append(Border(border.x,border.y-(SCREEN_SIZE), border.width, border.color))
-                self.border_list.remove(border)
-            border.move_down(1)
+        for border in self.border_list:# supprime les borders sorties et en cree des nouvelles en haut
+            if border.y>=SCREEN_SIZE:
+                border.y-=(SCREEN_SIZE+16)
+            border.move_down(scroll_value)
             
     
     def spawn_random_obstacles(self):
@@ -141,7 +140,7 @@ class Game:
         pyxel.run(self.update, self.draw)
     
     def pyxel_init(self):
-        pyxel.init(SCREEN_SIZE, SCREEN_SIZE, GAME_NAME, quit_key = pyxel.KEY_ESCAPE)
+        pyxel.init(SCREEN_SIZE, SCREEN_SIZE, GAME_NAME, quit_key = pyxel.KEY_ESCAPE,fps=30)
         pyxel.load('1.pyxres')
     
     def update(self):
