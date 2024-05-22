@@ -1,4 +1,4 @@
-import pyxel, random
+import pyxel, random, math
 
 ### CONSTANTS ###
 
@@ -56,6 +56,7 @@ class World:
         self.border_list = [Border(j*(SCREEN_SIZE-8), (i-1)*8, 8, 8+i%2) for i in range((SCREEN_SIZE//8+2)) for j in range(2)]
         self.last_spawn_time = 0
         self.obstacle_width = 9
+        self.coin_list=[]
         
         self.spawn_delay_frame_count = 25
             
@@ -79,7 +80,6 @@ class World:
             self.last_spawn_time = pyxel.frame_count
             obstacle = Obstacle(random.randrange(0, SCREEN_SIZE - self.obstacle_width), 0)
             self.obstacle_list.append(obstacle)
-
 
     def update(self, speed):
         self.scroll_world(speed)
@@ -106,12 +106,15 @@ class Obstacle:
         pyxel.blt(self.x, self.y, 0, image[0], image[1], self.width, self.height, colkey=5)
 
 
+class Coin(Obstacle):
+    pass
+
 ### GAME CLASSE ###
 
 class Game:
     def __init__(self):
         self.pyxel_init()
-        
+        self.score=0
         self.world = World()
         self.player = Player(0, SCREEN_SIZE / 2)
         pyxel.run(self.update, self.draw)
@@ -123,12 +126,15 @@ class Game:
     def update(self):
         self.world.update(5)
         self.player.update()
+        if pyxel.frame_count%30==0:
+            self.score+=round(2.71**(0.1*(pyxel.frame_count//60)))
 
     
     def draw(self):
         pyxel.cls(3)
         self.world.draw()
         self.player.draw()
+        pyxel.text(50,0,"score: " + str(self.score),0)
         
         
 
