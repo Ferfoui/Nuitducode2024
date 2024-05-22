@@ -3,7 +3,7 @@ import pyxel
 ### CONSTANTS ###
 
 SCREEN_SIZE = 128
-GAME_NAME = "Simulateur de piste de décolage accidentée et infinie"
+GAME_NAME = "Simulateur de Piste de Décolage Accidentée et Infinie"
 
 RIGHT_DIRECTION = 1
 LEFT_DIRECTION = -1
