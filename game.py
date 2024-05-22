@@ -16,14 +16,14 @@ class Player:
         pass
 
     def draw(self):
-        pass
+        pyxel.blt(self.x, self.y, 0, 0, 0, 16, 16 )
 
 
 ### GAME CLASSE ###
 
 class Game:
     def __init__(self):
-        pyxel.init(SCREEN_SIZE, SCREEN_SIZE, GAME_NAME, quit_key=pyxel.KEY_ESCAPE)
+        pyxel.init(SCREEN_SIZE, SCREEN_SIZE, GAME_NAME, quit_key = pyxel.KEY_ESCAPE)
         self.player = Player(0,0)
         pyxel.run(self.update, self.draw)
     
