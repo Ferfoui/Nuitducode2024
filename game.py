@@ -31,7 +31,6 @@ class Player:
 class Game:
     def __init__(self):
         pyxel.init(SCREEN_SIZE, SCREEN_SIZE, GAME_NAME, quit_key = pyxel.KEY_ESCAPE)
-        #pyxel.image[0].load(0,0,"1.pyxres")  ne marche pas
         self.player = Player(0,0)
         pyxel.run(self.update, self.draw)
     
