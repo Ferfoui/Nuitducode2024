@@ -152,15 +152,15 @@ class World:
         if obstacle_1_could_spawn and (pyxel.rndf(0, 1) > 0.62):
             self.last_obstacle_1_spawn_time = pyxel.frame_count
             if pyxel.rndf(0, 1) > 0.80:
-                obstacle = Coin(pyxel.rndi(LEFT_BORDER, RIGHT_BORDER - self.obstacle_width), 0)
+                obstacle = Coin(pyxel.rndi(LEFT_BORDER, RIGHT_BORDER - self.obstacle_width), 16)
             else:
-                obstacle = Obstacle(pyxel.rndi(LEFT_BORDER, RIGHT_BORDER - self.obstacle_width), 0)
+                obstacle = Obstacle(pyxel.rndi(LEFT_BORDER, RIGHT_BORDER - self.obstacle_width), 16)
                 
             self.obstacle_list.append(obstacle)
             
         if (pyxel.frame_count > 600) and obstacle_2_could_spawn and (pyxel.rndf(0, 1) > 0.8):
             self.last_obstacle_2_spawn_time = pyxel.frame_count
-            obstacle = Obstacle(pyxel.rndi(LEFT_BORDER, RIGHT_BORDER - self.obstacle_width), 0)
+            obstacle = Obstacle(pyxel.rndi(LEFT_BORDER, RIGHT_BORDER - self.obstacle_width), 16)
             self.obstacle_list.append(obstacle)
 
     def update(self, speed, player):
@@ -208,13 +208,13 @@ class Coin(Obstacle):
         pyxel.blt(self.x, self.y, 0, self.image[0], self.image[1], self.width, self.height, colkey=5)
 
 
-### GAME CLASSE ###
+### GAME CLASS ###
 
 class Game:
     def __init__(self):
         self.pyxel_init()
         self.world = World()
-        self.player = Player(SCREEN_SIZE / 2, SCREEN_SIZE / 2)
+        self.player = Player(SCREEN_SIZE / 2, int(SCREEN_SIZE * 11/16))
         self.player.score=0
         pyxel.run(self.update, self.draw)
     
