@@ -34,11 +34,26 @@ class Player(Hitbox):
     def __init__(self, x, y):
         super().__init__(x, y, width= 16, height= 16)
         
+        self.is_alive = True
+        self.health = 100
+        
         self.horizontal_speed = 0
         self.acceleration = 2
         self.max_speed = 10
+        self.image = 48, 8
+    
+    def set_dead(self):
+        self.acceleration = 0
+        self.image = 48, 24
 
     def update(self):
+        self.apply_movement()
+        
+        if self.health <= 0:
+            self.health = 0
+            self.set_dead()
+        
+    def apply_movement(self):
         if pyxel.btn(pyxel.KEY_LEFT):
             self.calcul_speed(LEFT_DIRECTION)
         if pyxel.btn(pyxel.KEY_RIGHT):
@@ -49,8 +64,7 @@ class Player(Hitbox):
         self.move()
 
     def draw(self):
-        image = 48, 8
-        pyxel.blt(self.x, self.y, 0, image[0], image[1], self.width, self.height, colkey=5)
+        pyxel.blt(self.x, self.y, 0, self.image[0], self.image[1], self.width, self.height, colkey=5)
 
     def calcul_speed(self, direction):
         self.horizontal_speed += direction * self.acceleration
@@ -110,7 +124,7 @@ class World:
                 border.y-=(SCREEN_SIZE+16)
             border.move_down(scroll_value)
     
-    def check_collides(self, player):
+    def check_obstacle_collides(self, player):
         for obstacle in self.obstacle_list:
             if obstacle.check_collides(player):
                 return True
@@ -130,7 +144,8 @@ class World:
         self.scroll_world(speed)
         self.spawn_random_obstacles()
         
-        self.check_collides(player)
+        if self.check_obstacle_collides(player):
+            player.health -= 10
     
     def draw(self):
         for obstacle in self.obstacle_list:
@@ -157,7 +172,7 @@ class Game:
         self.pyxel_init()
         
         self.world = World()
-        self.player = Player(0, SCREEN_SIZE / 2)
+        self.player = Player(SCREEN_SIZE / 2, SCREEN_SIZE / 2)
         pyxel.run(self.update, self.draw)
     
     def pyxel_init(self):
