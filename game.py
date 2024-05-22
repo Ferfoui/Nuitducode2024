@@ -153,6 +153,8 @@ class World:
             self.last_obstacle_1_spawn_time = pyxel.frame_count
             if pyxel.rndf(0, 1) > 0.80:
                 obstacle = Coin(pyxel.rndi(LEFT_BORDER, RIGHT_BORDER - self.obstacle_width), 0)
+            elif pyxel.rndf(0, 1) > 0.80:
+                obstacle = Healing(pyxel.rndi(LEFT_BORDER, RIGHT_BORDER - self.obstacle_width), 0)
             else:
                 obstacle = Obstacle(pyxel.rndi(LEFT_BORDER, RIGHT_BORDER - self.obstacle_width), 0)
                 
@@ -172,6 +174,8 @@ class World:
         for obstacle in obstacles:
             if obstacle.is_coin:
                 player.score += round(2.71**(0.2*(pyxel.frame_count//60))) * 10
+            elif obstacle.is_heal:
+                player.health += 5
             else:
                 player.health -= 10
 
@@ -189,6 +193,7 @@ class Obstacle(Hitbox):
     def __init__(self, x, y):
         super().__init__(x, y, width= 9, height= 9)
         self.is_coin = False
+        self.is_heal = False
         
     def go_down(self, pixel_number_to_move):
         self.y += pixel_number_to_move
@@ -205,6 +210,17 @@ class Coin(Obstacle):
     
     def draw(self):
         self.image=(16,104)
+        pyxel.blt(self.x, self.y, 0, self.image[0], self.image[1], self.width, self.height, colkey=5)
+
+class Healing(Obstacle):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.is_heal = True
+        self.width=8
+        self.height=8
+    
+    def draw(self):
+        self.image=(40,80)
         pyxel.blt(self.x, self.y, 0, self.image[0], self.image[1], self.width, self.height, colkey=5)
 
 
