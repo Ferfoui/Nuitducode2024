@@ -21,10 +21,28 @@ class Player:
 
 class World:
     def __init__(self):
+        self.obstacle_list = []
+            
+    def scroll_world(self, scroll_value):
+        for obstacle in self.obstacle_list:
+            obstacle.go_down(scroll_value)
+    
+    def update():
         pass
     
-    def scroll_world(self):
+    def draw():
         pass
+
+class Obstacle:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.image = None
+        
+    def go_down(self, pixel_number_to_move):
+        self.y += pixel_number_to_move
+
+
 
 ### GAME CLASSE ###
 
