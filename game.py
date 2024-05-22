@@ -139,7 +139,7 @@ class World:
         obstacles = []
         
         for index, obstacle in enumerate(self.obstacle_list):
-            if obstacle.check_collides(player):
+            if player.check_collides(obstacle):
                 obstacles.append(obstacle)
                 self.obstacle_list.pop(index)
         
@@ -171,7 +171,7 @@ class World:
         
         for obstacle in obstacles:
             if obstacle.is_coin:
-                player.score += round(2.71**(0.1*(pyxel.frame_count//60))) * 10
+                player.score += round(2.71**(0.2*(pyxel.frame_count//60))) * 10
             else:
                 player.health -= 10
 
@@ -226,16 +226,20 @@ class Game:
         self.world.update(speed= 5, player= self.player)
         self.player.update()
         if pyxel.frame_count%30==0 and self.player.health>0:
-            self.player.score+=round(2.71**(0.1*(pyxel.frame_count//60)))
+            self.player.score+=round(2.71**(0.2*(pyxel.frame_count//60)))
 
     
     def draw(self):
         pyxel.cls(13)
-        pyxel.rect(8,2,SCREEN_SIZE-(8*2),12,12)
+        pyxel.rect(8, 0, SCREEN_SIZE-(8*2),2,5)
+        pyxel.rect(8, 2, SCREEN_SIZE-(8*2),12,12)
+        pyxel.rect(8, 14, SCREEN_SIZE-(8*2),2,5)
         self.world.draw()
         self.player.draw()
-        pyxel.text(80,0,"score: " + str(self.player.score),0)
-        pyxel.text(20,0,"vie: "+str(self.player.health),0)
+        pyxel.text(80, 6,"score: " + str(self.player.score),0)
+        pyxel.text(20, 6,"vie: "+str(self.player.health),0)
+        if not(self.player.is_alive) or self.player.health<=0:
+            pyxel.text(50,60,"GAME OVER",0)
         
         
 
