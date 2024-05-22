@@ -19,6 +19,13 @@ class Player:
         pass
 
 
+class World:
+    def __init__(self):
+        pass
+    
+    def scroll_world(self):
+        pass
+
 ### GAME CLASSE ###
 
 class Game:
