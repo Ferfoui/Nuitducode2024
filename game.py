@@ -41,10 +41,11 @@ class Border:
         self.color = color
 
     def move_down(self, scroll_speed):
-        self.y -= scroll_speed
+        self.y += scroll_speed
 
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, self.color*8, 8, 8, 0)
+        image=(self.color*8, 0)
+        pyxel.blt(self.x, self.y, 0, image[0], image[1], 8, 8)
 
 
 
@@ -52,7 +53,7 @@ class Border:
 class World:
     def __init__(self):
         self.obstacle_list = []
-        self.border_list = [Border(0,i*8,8,8+i%2) for i in range((SCREEN_SIZE//8)-1)]
+        self.border_list = [Border(j*(SCREEN_SIZE-8), (i-1)*8, 8, 8+i%2) for i in range((SCREEN_SIZE//8+1)) for j in range(2)]
         self.last_spawn_time = 0
         self.obstacle_width = 9
         
@@ -64,6 +65,13 @@ class World:
             
             if obstacle.y > SCREEN_SIZE:
                 self.obstacle_list.pop(index)
+
+        for border in self.border_list:
+            if border.y>SCREEN_SIZE:
+                self.border_list.append(Border(border.x,border.y-(SCREEN_SIZE), border.width, border.color))
+                self.border_list.remove(border)
+            border.move_down(1)
+            
     
     def spawn_random_obstacles(self):
         obstacle_could_spawn = (pyxel.frame_count - self.last_spawn_time) > self.spawn_delay_frame_count
